@@ -1,5 +1,5 @@
 import './css/styles.css';
-import {fetchCountries} from '../fetchCountries'
+import {fetchCountries} from './fetchCountries'
 import debounce from 'lodash.debounce';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
@@ -46,9 +46,10 @@ function renderData(el) {
         data = createList(el)
         refsData = ref.list
     }
+    createTempate(refsData, data) 
 }
 
-createTempate(refsData, data) 
+
 
 function createItem(el) {
     return el.map(({name, capital, population, flags, languages}) => 
@@ -86,12 +87,12 @@ function createList(el) {
 }
 
 function suitableName() {
-  Notiflix.Notify.success("Too many matches found. Please enter a more specific name.")
+ Notify.info("Too many matches found. Please enter a more specific name.")
 
 }
 
 function notSuitableName() {
-    Notiflix.Notify.failure("Oops, there is no country with that name")
+   Notify.failure("Oops, there is no country with that name")
   }
   
  function createTempate(ref, markup)  {
@@ -102,3 +103,4 @@ function clearData() {
     ref.list.innerHTML = ''
     ref.info.innerHTML = ''
 }
+
