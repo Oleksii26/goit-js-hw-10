@@ -6,8 +6,10 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 const ref = {
     input: document.querySelector('#search-box'),
     list: document.querySelector('.country-list'),
-    info: document.querySelector('.country-info')
-}
+    info: document.querySelector('.country-info'),
+    }
+
+ref.list.style.listStyle = 'none';
 
 const DEBOUNCE_DELAY = 300;
 
@@ -58,7 +60,7 @@ function createItem(el) {
     alt="${name.official}" 
     width="120">
   <h2 class="country__title">${name.official}</h2>
-  <ul class="country__list">
+  <ul class="country__list" style="list-style:none;">
       <li class="country__item">
       <span>Capital:</span>
     ${capital}
