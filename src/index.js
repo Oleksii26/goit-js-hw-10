@@ -1,5 +1,5 @@
 import './css/styles.css';
-import {fetchCountries} from './fetchCountries'
+import { fetchCountries } from './fetchCountries'
 import debounce from 'lodash.debounce';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
@@ -7,7 +7,7 @@ const ref = {
     input: document.querySelector('#search-box'),
     list: document.querySelector('.country-list'),
     info: document.querySelector('.country-info'),
-    }
+}
 
 ref.list.style.listStyle = 'none';
 
@@ -18,44 +18,37 @@ ref.input.addEventListener('input', debounce(onSearchCoutry, DEBOUNCE_DELAY))
 
 function onSearchCoutry(e) {
     const countryName = e.target.value.trim()
-    if(!countryName) {
+    if (!countryName) {
         clearData()
         return
     }
 
-fetchCountries(countryName).then(i => {
-    if(i.length > 10) {
-        suitableName()
+    fetchCountries(countryName).then(res => {
+        let data = ''
+        let refsData = ''
         clearData()
-        return
-    }
-    renderData(i)
-}).catch(error => {
-    clearData()
-    notSuitableName()
-})
+        if (res.length > 10) {
+            specificNameInfo()
+            clearData()
+        }
+        else if (res.length === 1) {
+            data = createItem(res)
+            refsData = ref.info
+        }
+        else {
+            data = createList(res)
+            refsData = ref.list
+        }
+        createTempate(refsData, data)
+    }).catch(error => {
+        clearData()
+        eroorName()
+    })
 }
-
-function renderData(el) {
-    let data = ''
-    let refsData = ''
-    clearData()
-
-    if(el.length === 1) {
-        data = createItem(el)
-        refsData = ref.info
-    } else {
-        data = createList(el)
-        refsData = ref.list
-    }
-    createTempate(refsData, data) 
-}
-
-
 
 function createItem(el) {
-    return el.map(({name, capital, population, flags, languages}) => 
-    ` <img
+    return el.map(({ name, capital, population, flags, languages }) =>
+        ` <img
     src="${flags.svg}" 
     alt="${name.official}" 
     width="120">
@@ -74,12 +67,12 @@ function createItem(el) {
       ${Object.values(languages)}
       </li>
   </ul>`
-  )
+    )
 }
 
 function createList(el) {
-    return el.map(({ name, flags}) => 
-    `<li class="country__item">
+    return el.map(({ name, flags }) =>
+        `<li class="country__item">
     <img class="country__img" 
       src="${flags.svg}" 
       alt="${name.official}" 
@@ -88,18 +81,17 @@ function createList(el) {
   </li>`).join('')
 }
 
-function suitableName() {
- Notify.info("Too many matches found. Please enter a more specific name.")
-
+function specificNameInfo() {
+    Notify.info("Too many matches found. Please enter a more specific name.")
 }
 
-function notSuitableName() {
-   Notify.failure("Oops, there is no country with that name")
-  }
-  
- function createTempate(ref, markup)  {
+function eroorName() {
+    Notify.failure("Oops, there is no country with that name")
+}
+
+function createTempate(ref, markup) {
     ref.innerHTML = markup
- }
+}
 
 function clearData() {
     ref.list.innerHTML = ''
